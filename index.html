@@ -1,0 +1,886 @@
+bash
+
+cat > /home/claude/mindhack_premium_v2.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MindHack Decode — Laporan Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root {
+  --bg:#F5EFE3; --bg2:#EDE5D4; --bg3:#E4D9C5; --bg4:#D9CEB6;
+  --text:#1A0A00; --body:#2E1A06; --muted:#4A2E08; --faint:#6B4A20;
+  --gold:#5C3800; --gold2:#3E2200; --gold3:#2E1600; --golddim:rgba(80,45,0,0.12); --goldborder:rgba(80,45,0,0.35);
+  --clay:#7A1E00; --claydim:rgba(100,20,0,0.10); --clayborder:rgba(100,20,0,0.35);
+  --moss:#1A4010; --mossdim:rgba(20,55,10,0.12); --mossborder:rgba(20,55,10,0.35);
+  --border:rgba(80,45,0,0.15); --border2:rgba(80,45,0,0.28);
+  --r:18px; --rsm:10px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;background-image:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(139,94,26,0.04) 0%,transparent 65%);}
+.page{max-width:600px;margin:0 auto;}
+.screen{display:none;} .screen.active{display:block;}
+
+/* ── FORM PAGE ── */
+.form-pg{padding:36px 24px 60px;}
+.mh-emblem{width:32px;height:32px;background:linear-gradient(135deg,#4A2F0E,#8B5E1A);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;box-shadow:0 0 12px rgba(139,94,26,0.25);}
+.brand-row{display:flex;align-items:center;gap:10px;margin-bottom:36px;}
+.brand-txt{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;}
+.form-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--faint);margin-bottom:10px;}
+.form-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;line-height:1.2;margin-bottom:10px;color:var(--text);}
+.form-title em{color:var(--gold);font-style:normal;}
+.form-sub{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:28px;}
+.fcard{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;}
+.fcard-lbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:700;margin-bottom:14px;font-family:'DM Mono',monospace;}
+.frow{margin-bottom:12px;} .frow:last-child{margin-bottom:0;}
+.frow label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.frow input,.frow select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);padding:10px 13px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;-webkit-appearance:none;transition:border-color .2s;}
+.frow input:focus,.frow select:focus{border-color:var(--gold);}
+.frow-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.kode-box{background:var(--golddim);border:1px solid var(--goldborder);border-radius:var(--rsm);padding:12px 16px;margin-bottom:12px;font-size:13px;color:var(--body);line-height:1.65;}
+.kode-box strong{color:var(--gold);}
+.kode-in{width:100%;background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--rsm);padding:12px 16px;font-size:15px;font-family:'DM Mono',monospace;color:var(--text);outline:none;text-transform:uppercase;letter-spacing:1.5px;transition:border-color .2s;text-align:center;}
+.kode-in:focus{border-color:var(--gold);}
+.field-err{font-size:12px;color:var(--clay);margin-top:5px;display:none;}
+.btn-main{width:100%;background:linear-gradient(135deg,#4A2F0E,#8B5E1A);color:#F5EFE3;border:none;border-radius:var(--rsm);padding:16px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.3px;box-shadow:0 4px 16px rgba(139,94,26,0.22);transition:all .2s;margin-bottom:10px;}
+.btn-main:hover{transform:translateY(-1px);opacity:.95;}
+
+/* ── AI LOADING ── */
+.ai-pg{padding:60px 24px;text-align:center;min-height:100svh;display:flex;flex-direction:column;justify-content:center;}
+.ai-spinner{width:48px;height:48px;border:3px solid var(--goldborder);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.ai-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.65;}
+.ai-steps{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:340px;margin:0 auto;}
+.ai-step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--faint);transition:all .4s;}
+.ai-step.act{color:var(--text);font-weight:500;}
+.ai-step.done{color:var(--muted);}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);flex-shrink:0;}
+.ai-step.done .ai-dot{background:var(--gold);}
+.ai-step.act .ai-dot{background:var(--gold);animation:blink .8s infinite;}
+@keyframes blink{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+/* ── COVER ── */
+.cover{min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;background:#F0E8D8;}
+.cover::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");pointer-events:none;z-index:1;}
+.cover-mountain{position:absolute;bottom:0;left:0;right:0;height:55%;pointer-events:none;z-index:0;}
+.cover-mountain svg{width:100%;height:100%;}
+.cover-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:400px;height:260px;background:radial-gradient(ellipse,rgba(139,94,26,0.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.cover-inner{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;min-height:100svh;padding:36px 32px 40px;}
+.c-emblem{position:absolute;right:28px;top:50%;transform:translateY(-50%);opacity:.07;pointer-events:none;}
+.c-emblem svg{width:120px;height:120px;}
+.c-top{display:flex;flex-direction:column;gap:0;}
+.c-logo-row{display:flex;align-items:center;gap:10px;}
+.c-brand-txt{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;}
+.c-rule{display:flex;align-items:center;gap:10px;margin:28px 0 22px;}
+.c-rule-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--goldborder),transparent);}
+.c-rule-diamond{width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;}
+.c-confid{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.c-for{font-size:11px;color:var(--muted);letter-spacing:.5px;margin-bottom:4px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.c-name{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;line-height:.95;color:var(--gold2);letter-spacing:-1px;margin-bottom:2px;}
+.c-name-last{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;font-style:italic;color:#3E2000;line-height:.95;}
+.c-meta{font-size:12px;color:var(--muted);margin-top:12px;font-family:'DM Mono',monospace;letter-spacing:.3px;}
+.c-rule2{display:flex;align-items:center;gap:10px;margin:22px 0 18px;}
+.c-rule2-line{flex:1;height:1px;background:var(--goldborder);}
+.c-karakter{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--gold3);line-height:1;margin-bottom:4px;}
+.c-tagline{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--clay);}
+.c-bottom{padding-top:20px;border-top:1px solid var(--goldborder);}
+.c-bottom-quote{font-family:'Cormorant Garamond',serif;font-size:15px;font-style:italic;color:var(--body);line-height:1.7;margin-bottom:16px;}
+.c-bottom-meta{display:flex;justify-content:space-between;align-items:center;}
+.c-bottom-meta span{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
+.scroll-hint{animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+
+/* ── WOW PAGE ── */
+.wow-page{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 36px;background:var(--bg);position:relative;overflow:hidden;text-align:center;}
+.wow-page::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(139,94,26,0.06) 0%,transparent 65%);pointer-events:none;}
+.wow-num{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:32px;text-transform:uppercase;}
+.wow-divider{width:48px;height:1px;background:var(--gold);margin:0 auto 40px;opacity:.6;}
+.wow-line1{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;font-style:italic;color:var(--muted);line-height:1.1;margin-bottom:18px;}
+.wow-line2{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--gold2);line-height:1;margin-bottom:18px;}
+.wow-line3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;font-style:italic;color:var(--body);line-height:1.3;margin-bottom:48px;}
+.wow-sub{font-size:14px;color:var(--body);line-height:1.8;max-width:320px;margin:0 auto;}
+
+/* ── SECTIONS ── */
+.sections{padding:0 20px 60px;}
+.section{margin-bottom:10px;}
+.sec-header{padding:32px 0 18px;}
+.sec-seq{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.sec-seq::after{content:'';flex:1;height:1px;background:var(--border2);}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--text);line-height:1.15;}
+.card{border-radius:var(--r);border:1px solid var(--border2);padding:22px 20px;margin-bottom:10px;}
+.c-dark{background:var(--bg2);}
+.c-earth{background:var(--golddim);border-color:var(--goldborder);}
+.c-clay{background:var(--claydim);border-color:var(--clayborder);}
+.c-moss{background:var(--mossdim);border-color:var(--mossborder);}
+.cl{font-size:9px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:12px;}
+.cl-g{color:var(--gold);} .cl-c{color:var(--clay);} .cl-m{color:var(--moss);} .cl-d{color:var(--muted);}
+.bd{font-size:15px;line-height:2.0;color:var(--text);font-weight:450;}
+.bd p{margin-bottom:10px;} .bd p:last-child{margin-bottom:0;}
+.bd em{color:var(--gold2);font-style:normal;font-weight:500;}
+ul.ls{list-style:none;display:flex;flex-direction:column;gap:11px;margin-top:4px;}
+ul.ls li{display:flex;align-items:flex-start;gap:12px;font-size:15px;line-height:1.85;color:var(--text);font-weight:450;}
+ul.ls li::before{content:'◆';font-size:6px;line-height:2.1;color:var(--gold);flex-shrink:0;}
+ul.ls.warn li::before{color:var(--clay);}
+ul.ls.moss li::before{color:var(--moss);}
+.bq{border-left:2px solid var(--gold);padding:18px 20px;margin:16px 0;background:var(--golddim);border-radius:0 var(--r) var(--r) 0;}
+.bq p{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--gold2);line-height:1.8;}
+.breath{height:24px;}
+.full-hl{background:linear-gradient(135deg,var(--golddim),rgba(139,94,26,0.04));border:1px solid var(--goldborder);border-radius:var(--r);padding:28px 24px;margin:10px 0;text-align:center;}
+.full-hl .big{font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--gold2);line-height:1.4;}
+.full-hl .small{font-size:13px;color:var(--muted);margin-top:10px;}
+
+/* chart */
+.chart-wrap{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px 20px 20px;margin-bottom:10px;}
+.chart-title{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:20px;}
+.radial-ring{display:flex;flex-direction:column;gap:14px;}
+.el-row{display:flex;align-items:center;gap:12px;}
+.el-sym{font-size:18px;width:24px;flex-shrink:0;text-align:center;}
+.el-name{font-size:13px;font-weight:500;color:var(--text);width:70px;flex-shrink:0;}
+.el-track{flex:1;height:7px;background:rgba(0,0,0,0.08);border-radius:4px;overflow:hidden;position:relative;}
+.el-fill{height:100%;border-radius:4px;position:relative;transition:width 1.2s ease;width:0;}
+.el-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.40);border-radius:4px;}
+.el-pct{font-size:13px;font-weight:700;width:36px;text-align:right;flex-shrink:0;font-family:'DM Mono',monospace;}
+.pentagon-wrap{text-align:center;padding:10px 0 4px;}
+.pentagon-wrap canvas{max-width:220px;}
+.pentagon-lbl{font-size:11px;color:var(--muted);margin-top:8px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.stat{background:var(--bg4);border:1px solid var(--border2);border-radius:var(--rsm);padding:18px 14px;text-align:center;}
+.sn{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.sl{font-size:11px;color:var(--muted);line-height:1.5;}
+.vak{margin-bottom:13px;}
+.vak-r{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.vak-n{font-size:13px;color:var(--text);font-weight:500;}
+.vak-p{font-size:13px;color:var(--gold);font-weight:700;font-family:'DM Mono',monospace;}
+.vak-t{height:5px;background:rgba(0,0,0,0.1);border-radius:3px;overflow:hidden;}
+.vak-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),rgba(139,94,26,0.45));transition:width 1.2s ease;width:0;}
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.pill{display:flex;align-items:center;gap:5px;background:var(--bg4);border:1px solid var(--border2);border-radius:20px;padding:4px 12px;font-size:11.5px;}
+.pdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;}
+.tl-i{display:flex;gap:14px;padding-bottom:22px;}
+.tl-i:last-child{padding-bottom:0;}
+.tl-l{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:36px;}
+.tl-d{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:1px solid;}
+.tl-dg{background:var(--mossdim);border-color:var(--mossborder);}
+.tl-dw{background:var(--claydim);border-color:var(--clayborder);}
+.tl-db{background:var(--golddim);border-color:var(--goldborder);}
+.tl-ds{background:rgba(148,163,184,0.07);border-color:rgba(148,163,184,0.22);}
+.tl-ln{flex:1;width:1px;background:var(--border);margin-top:6px;}
+.tl-r{flex:1;padding-top:4px;}
+.tl-y{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.6px;margin-bottom:5px;font-family:'DM Mono',monospace;}
+.tl-t{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.tl-tg{display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:10px;margin-bottom:8px;}
+.tag-g{background:var(--mossdim);color:var(--moss);}
+.tag-w{background:var(--claydim);color:var(--clay);}
+.tag-b{background:var(--golddim);color:var(--gold);}
+.tag-s{background:rgba(148,163,184,0.09);color:#1A2830;}
+.tl-b{font-size:13.5px;color:var(--body);line-height:1.75;}
+.tl-s{display:flex;gap:14px;margin-top:10px;}
+.tl-sc{text-align:center;}
+.tl-sl{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:3px;}
+.tl-sb{width:48px;height:3px;background:rgba(0,0,0,0.1);border-radius:2px;overflow:hidden;margin:0 auto 3px;}
+.tl-sf{height:100%;border-radius:2px;}
+.tl-sn{font-size:11px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace;}
+
+/* steps */
+.step-list{display:flex;flex-direction:column;gap:10px;}
+.step-i{display:flex;gap:14px;align-items:flex-start;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);padding:16px 14px;}
+.step-n{width:28px;height:28px;border-radius:50%;background:var(--golddim);border:1px solid var(--goldborder);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;font-family:'DM Mono',monospace;}
+.step-c strong{display:block;font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.step-c p{font-size:13.5px;color:var(--body);line-height:1.7;}
+
+/* prompt */
+.prompt-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rsm);padding:16px 18px;margin-bottom:8px;}
+.prompt-tag{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:8px;font-weight:700;font-family:'DM Mono',monospace;}
+.prompt-text{font-size:12.5px;color:var(--body);line-height:1.7;font-family:'DM Mono',monospace;}
+.copy-btn{background:transparent;border:1px solid var(--goldborder);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--gold);cursor:pointer;font-family:'Outfit',sans-serif;margin-top:10px;transition:all .2s;}
+.copy-btn:hover{background:var(--golddim);}
+
+/* produk */
+.prod{border-radius:var(--r);border:1px solid var(--border2);padding:22px 20px;margin-bottom:10px;background:var(--bg2);position:relative;overflow:hidden;transition:border-color .2s;}
+.prod.ft{border-color:var(--gold);background:var(--golddim);}
+.pbadge{position:absolute;top:0;right:0;font-size:9px;font-weight:700;padding:5px 13px;border-radius:0 var(--r) 0 var(--rsm);letter-spacing:.5px;font-family:'DM Mono',monospace;}
+.pb-g{background:var(--gold);color:#F0E8D8;}
+.pb-f{background:var(--mossdim);color:var(--moss);border:1px solid var(--mossborder);}
+.pico{font-size:22px;margin-bottom:10px;}
+.pname{font-size:15px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.pdesc{font-size:13.5px;color:var(--body);line-height:1.75;margin-bottom:12px;}
+.pwhy{font-size:13px;color:var(--gold);background:var(--golddim);border-radius:var(--rsm);padding:8px 12px;line-height:1.6;}
+.pbtn{margin-top:12px;display:inline-block;background:transparent;border:1px solid var(--goldborder);border-radius:var(--rsm);padding:9px 16px;font-size:13px;font-weight:600;color:var(--gold);text-decoration:none;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;}
+.pbtn:hover{background:var(--golddim);}
+
+/* closing */
+.closing{text-align:center;padding:40px 24px;border-radius:var(--r);background:linear-gradient(160deg,var(--bg2),var(--bg3));border:1px solid var(--goldborder);margin:8px 0 20px;position:relative;overflow:hidden;}
+.closing::after{content:'';position:absolute;font-size:220px;opacity:.06;bottom:-40px;right:-30px;pointer-events:none;line-height:1;}
+.closing-em{font-size:40px;margin-bottom:20px;display:block;}
+.closing p{font-size:15px;color:var(--body);line-height:2.0;}
+.closing em{color:var(--text);font-style:normal;font-weight:500;}
+.disc{background:var(--golddim);border:1px solid var(--goldborder);border-radius:var(--rsm);padding:16px 18px;margin-bottom:16px;}
+.disc p{font-size:13px;color:var(--body);line-height:1.65;}
+.disc strong{color:var(--gold);}
+
+/* buttons */
+.btn-area{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:linear-gradient(135deg,#1A5C2A,#229E42);border:none;border-radius:var(--rsm);padding:16px 20px;font-size:15px;font-weight:600;color:#fff;text-decoration:none;font-family:'Outfit',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(34,158,66,0.20);transition:all .2s;}
+.btn-wa:hover{transform:translateY(-1px);}
+.btn-wa small{font-size:11px;font-weight:400;opacity:.8;display:block;text-align:center;margin-top:2px;}
+.btn-retake{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:linear-gradient(135deg,#4A2F0E,#8B5E1A);border:none;border-radius:var(--rsm);padding:16px 20px;font-size:15px;font-weight:600;color:#fff;text-decoration:none;font-family:'Outfit',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(139,94,26,0.22);transition:all .2s;}
+.btn-retake:hover{transform:translateY(-1px);}
+.btn-pdf{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:transparent;border:1px solid var(--goldborder);border-radius:var(--rsm);padding:14px;font-size:14px;font-weight:600;color:var(--gold);font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-pdf:hover{background:var(--golddim);}
+.pdf-loading{display:none;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--muted);}
+.spinner{width:16px;height:16px;border:2px solid var(--goldborder);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+.footer{text-align:center;padding:28px 20px 36px;border-top:1px solid var(--border);}
+.footer p{font-size:12px;color:var(--muted);line-height:1.9;}
+@media(max-width:480px){.c-name,.c-name-last{font-size:40px;}.two{grid-template-columns:1fr;}.wow-line2{font-size:42px;}.frow-2{grid-template-columns:1fr;}}
+@media print{body{background:#F5EFE3!important;}.btn-area,.screen#sForm,.screen#sLoading{display:none!important;}.page{max-width:100%!important;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════════════════ FORM ══════════════════ -->
+<div class="screen active" id="sForm">
+<div class="form-pg">
+  <div class="brand-row">
+    <div class="mh-emblem">MH</div>
+    <div class="brand-txt">MindHack Learning</div>
+  </div>
+  <div class="form-eyebrow">MindHack Decode · Premium</div>
+  <div class="form-title">Laporan personal<br><em>khusus untukmu.</em></div>
+  <div class="form-sub">Isi data di bawah. Laporan digenerate AI dalam ~30 detik — personal, mendalam, ditulis khusus berdasarkan pola unikmu.</div>
+
+  <div class="fcard">
+    <div class="fcard-lbl">Kode Hasil Quiz</div>
+    <div class="kode-box">Masukkan kode dari hasil MindHack Decode FREE.<br>Contoh: <strong>MH-TUMBUH-BARA-230526-GQ</strong></div>
+    <div class="frow">
+      <label>Kode Quiz *</label>
+      <input class="kode-in" type="text" id="fKodeQuiz" placeholder="MH-XXXX-XXXX-XXXXXX-XX" maxlength="30" oninput="this.value=this.value.toUpperCase()">
+      <div class="field-err" id="errQ">Format tidak valid. Contoh: MH-TUMBUH-BARA-230526-GQ</div>
+    </div>
+  </div>
+
+  <div class="fcard">
+    <div class="fcard-lbl">Kode Unlock Premium</div>
+    <div class="kode-box">Masukkan kode yang kamu terima setelah pembayaran dikonfirmasi via WhatsApp.</div>
+    <div class="frow">
+      <label>Kode Unlock *</label>
+      <input class="kode-in" type="text" id="fKodeUnlock" placeholder="MH-UNLOCK-XXXX" maxlength="24" oninput="this.value=this.value.toUpperCase()">
+      <div class="field-err" id="errU">Kode unlock tidak valid.</div>
+    </div>
+    <div style="font-size:12px;color:var(--faint);margin-top:10px;">Belum punya kode? <a href="#" onclick="hubungiWA()" style="color:var(--gold);text-decoration:none;font-weight:600">Hubungi WhatsApp →</a></div>
+  </div>
+
+  <div class="fcard">
+    <div class="fcard-lbl">Data Pribadi</div>
+    <div class="frow-2">
+      <div class="frow" style="margin:0"><label>Nama Depan *</label><input type="text" id="fNamaDepan" placeholder="Dewi"></div>
+      <div class="frow" style="margin:0"><label>Nama Belakang</label><input type="text" id="fNamaBelakang" placeholder="Ariyanti"></div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="frow"><label>Tempat Lahir</label><input type="text" id="fTempat" placeholder="Kota / Kabupaten"></div>
+    <div class="frow-2">
+      <div class="frow" style="margin:0"><label>Tanggal Lahir *</label><input type="date" id="fTgl"></div>
+      <div class="frow" style="margin:0"><label>Jam Lahir</label><input type="time" id="fJam"></div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="frow-2">
+      <div class="frow" style="margin:0">
+        <label>Golongan Darah *</label>
+        <select id="fGoldar"><option value="">Pilih</option><option value="O">O</option><option value="A">A</option><option value="B">B</option><option value="AB">AB</option><option value="?">Tidak tahu</option></select>
+      </div>
+      <div class="frow" style="margin:0">
+        <label>Agama</label>
+        <select id="fAgama"><option value="">Pilih</option><option>Islam</option><option>Kristen</option><option>Katolik</option><option>Hindu</option><option>Buddha</option><option>Konghucu</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="fcard">
+    <div class="fcard-lbl">Latar Belakang</div>
+    <div class="frow"><label>Profesi / Jurusan</label><input type="text" id="fProfesi" placeholder="Guru Matematika / S1 Teknik / Content Creator..."></div>
+    <div class="frow">
+      <label>Peran Utama</label>
+      <select id="fPeran">
+        <option value="">Pilih</option><option value="pelajar">Pelajar / Mahasiswa</option><option value="guru">Guru / Pendidik</option>
+        <option value="founder">Entrepreneur / Founder</option><option value="ibu">Ibu Rumah Tangga</option>
+        <option value="profesional">Profesional / Karyawan</option><option value="kreator">Kreator / Konten</option><option value="lainnya">Lainnya</option>
+      </select>
+    </div>
+    <div class="frow"><label>Kesibukan Saat Ini</label><input type="text" id="fKesibukan" placeholder="Mengajar, bisnis, konten..."></div>
+  </div>
+
+  <div class="fcard">
+    <div class="fcard-lbl">Kontak</div>
+    <div class="frow"><label>Nomor WhatsApp *</label><input type="tel" id="fWA" placeholder="08xx xxxx xxxx"></div>
+    <div class="frow"><label>Email <span style="color:var(--faint)">(opsional)</span></label><input type="email" id="fEmail" placeholder="nama@email.com"></div>
+  </div>
+
+  <button class="btn-main" onclick="doGenerate()">✨ Generate Laporan Premium</button>
+  <div style="font-size:12px;color:var(--faint);text-align:center;line-height:1.65">Laporan digenerate AI ~30 detik. Data bersifat rahasia.</div>
+</div>
+</div>
+
+<!-- ══════════════════ LOADING ══════════════════ -->
+<div class="screen" id="sLoading">
+<div class="ai-pg">
+  <div class="ai-spinner"></div>
+  <div class="ai-title">AI sedang membaca<br>pola hidupmu…</div>
+  <div class="ai-sub">Laporan personalmu sedang digenerate.<br>Mohon tunggu 20–40 detik.</div>
+  <div class="ai-steps">
+    <div class="ai-step" id="as0"><div class="ai-dot"></div>Membaca kode quiz & data biodata</div>
+    <div class="ai-step" id="as1"><div class="ai-dot"></div>Menganalisis 5 energi karakter</div>
+    <div class="ai-step" id="as2"><div class="ai-dot"></div>Membaca pola dari tanggal & jam lahir</div>
+    <div class="ai-step" id="as3"><div class="ai-dot"></div>Menyusun Confusion Decoder personal</div>
+    <div class="ai-step" id="as4"><div class="ai-dot"></div>Membuat siklus energi & timeline</div>
+    <div class="ai-step" id="as5"><div class="ai-dot"></div>Merangkai 7 langkah konkret</div>
+    <div class="ai-step" id="as6"><div class="ai-dot"></div>Finalisasi laporan premium…</div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════ LAPORAN ══════════════════ -->
+<div class="screen" id="sLaporan">
+  <div id="laporan"></div>
+</div>
+
+</div>
+
+<script>
+const CFG = {
+  GEMINI_KEY: 'AIzaSyDOqRI792N22uo8fJAiryQE4rWOggARgso',
+  WA_NUMBER: '62895415109805',
+  UNLOCK_CODES: { 'MH-DEMO-2026': true }
+};
+
+const TIPE_MAP = {
+  'BARA':  {nama:'Bara',  emoji:'🔥',c:'#B85A30'},
+  'TUMBUH':{nama:'Tumbuh',emoji:'🌿',c:'#4E7840'},
+  'BAJA':  {nama:'Baja',  emoji:'⚙️',c:'#6A7D8E'},
+  'BUMI':  {nama:'Bumi',  emoji:'🏔️',c:'#C8A03C'},
+  'ARUS':  {nama:'Arus',  emoji:'💧',c:'#3A7A9C'},
+};
+
+let U={};
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+
+function parseKode(k){
+  const p=k.trim().toUpperCase().split('-');
+  if(p.length<4||p[0]!=='MH')return null;
+  if(!TIPE_MAP[p[1]])return null;
+  return{dom:p[1],sec:p[2]||'BUMI',kode:k.trim().toUpperCase()};
+}
+
+function doGenerate(){
+  const kq=document.getElementById('fKodeQuiz').value.trim();
+  const ku=document.getElementById('fKodeUnlock').value.trim().toUpperCase();
+  const nd=document.getElementById('fNamaDepan').value.trim();
+  const tgl=document.getElementById('fTgl').value;
+  const goldar=document.getElementById('fGoldar').value;
+  const wa=document.getElementById('fWA').value.trim();
+
+  const parsed=parseKode(kq);
+  document.getElementById('errQ').style.display=parsed?'none':'block';
+  document.getElementById('errU').style.display=CFG.UNLOCK_CODES[ku]?'none':'block';
+  if(!parsed||!CFG.UNLOCK_CODES[ku])return;
+  if(!nd){alert('Nama depan wajib diisi.');return;}
+  if(!tgl){alert('Tanggal lahir wajib diisi.');return;}
+  if(!goldar){alert('Pilih golongan darah.');return;}
+  if(!wa){alert('Nomor WhatsApp wajib diisi.');return;}
+
+  U={
+    namaDepan:nd, namaBelakang:document.getElementById('fNamaBelakang').value.trim(),
+    tgl, jam:document.getElementById('fJam').value,
+    goldar, agama:document.getElementById('fAgama').value,
+    tempat:document.getElementById('fTempat').value.trim(),
+    profesi:document.getElementById('fProfesi').value.trim(),
+    peran:document.getElementById('fPeran').value||'lainnya',
+    kesibukan:document.getElementById('fKesibukan').value.trim(),
+    wa, email:document.getElementById('fEmail').value.trim(),
+    parsed
+  };
+  U.nama=U.namaDepan+(U.namaBelakang?' '+U.namaBelakang:'');
+
+  showScreen('sLoading');
+  animSteps();
+  callGemini();
+}
+
+function animSteps(){
+  const st=['as0','as1','as2','as3','as4','as5','as6'];
+  const dl=[0,2500,5000,8000,12000,16000,21000];
+  st.forEach((id,i)=>{setTimeout(()=>{if(i>0)document.getElementById(st[i-1]).className='ai-step done';document.getElementById(id).className='ai-step act';},dl[i]);});
+}
+
+async function callGemini(){
+  const {namaDepan,namaBelakang,tgl,jam,goldar,agama,tempat,profesi,peran,kesibukan,parsed} = U;
+  const T=TIPE_MAP[parsed.dom]||TIPE_MAP['BUMI'];
+  const S=TIPE_MAP[parsed.sec]||TIPE_MAP['BUMI'];
+  const tglF=tgl?new Date(tgl).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  const input=`NAMA DEPAN: ${namaDepan}
+NAMA BELAKANG: ${namaBelakang||'-'}
+NAMA LENGKAP: ${U.nama}
+PROFESI/JURUSAN: ${profesi||'-'}
+PERAN UTAMA: ${peran}
+KESIBUKAN: ${kesibukan||'-'}
+GOLONGAN DARAH: ${goldar}
+AGAMA: ${agama||'-'}
+TEMPAT LAHIR: ${tempat||'-'}
+TANGGAL LAHIR: ${tglF||'-'}
+JAM LAHIR: ${jam||'-'}
+KODE QUIZ: ${parsed.kode}
+KARAKTER DOMINAN: ${T.nama} ${T.emoji}
+KARAKTER SEKUNDER: ${S.nama} ${S.emoji}`;
+
+  const sys=`Kamu adalah MindHack Decode AI. Kamu adalah cermin yang hangat, bukan psikolog atau peramal.
+Misi: "Membantu orang merasa dipahami, bukan dihakimi." Tone: hangat, reflektif, manusiawi, elegan.
+FRAMEWORK 5 ENERGI (gunakan HANYA istilah ini, jangan K-Gen/Wu-Xing/BaZi/MBTI):
+🔥 BARA: ekspresif, berpengaruh, mood-driven. Confusion: bukan malas, energi bergantung lingkungan.
+🌿 TUMBUH: visioner, kreatif, big-picture. Confusion: bukan tidak konsisten, butuh makna dulu.
+⚙️ BAJA: logis, sistematis, perfeksionis. Confusion: bukan kaku, butuh fondasi logis.
+🏔️ BUMI: stabil, mendalam, tekun. Confusion: bukan lambat, memproses lebih dalam.
+💧 ARUS: fleksibel, intuitif, empatik. Confusion: bukan tidak fokus, tidak bisa di bawah tekanan.
+ATURAN WAJIB: gunakan "cenderung/kemungkinan besar/biasanya". DILARANG: "Kamu adalah..", prediksi tahun terbaik/terberat spesifik, sebut tool/quiz/formula ke user.
+OUTPUT: JSON valid saja, tidak ada teks lain.
+{
+  "cover_tagline":"string 5-8 kata tentang karakter dominan",
+  "cover_quote":"string 1 kalimat pembuka emosional",
+  "wow_line1":"Kamu bukan",
+  "wow_line2":"string 1-3 kata kuat (misal: lambat. atau tidak fokus.)",
+  "wow_line3":"string 1-2 baris lanjutan poetic",
+  "wow_sub":"string 2-3 kalimat metafora kuat tentang karakter ini",
+  "vak":{"k":50,"v":30,"a":20},
+  "sec01_cenderung":["string li 1","string li 2","string li 3","string li 4"],
+  "sec01_goldar":"string 1 kalimat nuansa goldar (kosong jika tidak tahu)",
+  "sec02_quote":"string kalimat highlight besar",
+  "sec02_bukan":["string","string","string"],
+  "sec02_akar":"string 2-3 kalimat akar penyebab sesungguhnya",
+  "sec02_trigger":["string","string","string","string"],
+  "sec02_dark_mirror":"string 2-3 kalimat dark mirror lembut dan spesifik",
+  "sec03_title":"string judul section 03 yang personal",
+  "sec03_cards":[{"cl":"string label","body":"string 2-3 kalimat"},{"cl":"string","body":"string"},{"cl":"string","body":"string"}],
+  "sec03_full_hl":"string kalimat besar italic tentang profesi/peran user",
+  "sec04_cocok":["string li 1","string li 2","string li 3","string li 4"],
+  "sec04_tidak_cocok":["string","string","string"],
+  "sec05_potensi":["string li 1","string li 2","string li 3","string li 4"],
+  "sec05_bq":"string kalimat blockquote poetic",
+  "sec06_blindspot":["string li 1 dengan judul bold","string li 2","string li 3","string li 4"],
+  "sec07_growth_tips":["string li 1","string li 2","string li 3"],
+  "sec07_timeline":[
+    {"icon":"⚡","cls":"tl-dg","tag":"tag-g","label":"string tahun/fase","title":"string judul fase","body":"string deskripsi","s1l":"Pribadi","s1v":80,"s2l":"Karir","s2v":75,"c1":"#4E7840","c2":"#4E7840"},
+    {"icon":"🌟","cls":"tl-dw","tag":"tag-w","label":"string","title":"string","body":"string","s1l":"Pribadi","s1v":75,"s2l":"Relasi","s2v":80,"c1":"#B85A30","c2":"#B85A30"},
+    {"icon":"⚠️","cls":"tl-db","tag":"tag-b","label":"string","title":"string","body":"string","s1l":"Pribadi","s1v":65,"s2l":"Karir","s2v":70,"c1":"#C8A03C","c2":"#C8A03C"},
+    {"icon":"🛡","cls":"tl-ds","tag":"tag-s","label":"string","title":"string","body":"string","s1l":"Pribadi","s1v":55,"s2l":"Karir","s2v":60,"c1":"#94A3B8","c2":"#94A3B8"},
+    {"icon":"🌊","cls":"tl-dg","tag":"tag-g","label":"string","title":"string","body":"string","s1l":"Pribadi","s1v":88,"s2l":"Karir","s2v":85,"c1":"#4E7840","c2":"#4E7840"}
+  ],
+  "sec08_steps":[
+    {"title":"string judul langkah","body":"string deskripsi konkret"},
+    {"title":"string","body":"string"},
+    {"title":"string","body":"string"},
+    {"title":"string","body":"string"},
+    {"title":"string","body":"string"},
+    {"title":"string","body":"string"},
+    {"title":"string","body":"string"}
+  ],
+  "sec09_prompts":[
+    {"tag":"string tujuan","text":"string prompt siap pakai spesifik"},
+    {"tag":"string","text":"string"},
+    {"tag":"string","text":"string"},
+    {"tag":"string","text":"string"},
+    {"tag":"string","text":"string"}
+  ],
+  "produk":[
+    {"ft":true,"ico":"🤖","name":"string nama produk paling cocok","desc":"string deskripsi 2-3 kalimat","why":"string alasan kenapa cocok untuk user ini","btn":"string CTA"},
+    {"ft":false,"ico":"📖","name":"string","desc":"string","why":"string","btn":"string"},
+    {"ft":false,"ico":"🌐","name":"string","desc":"string","why":"string","btn":"string"}
+  ],
+  "closing_em":"string emoji sesuai karakter",
+  "closing_p1":"string kalimat pembuka penutup personal untuk user",
+  "closing_p2":"string kalimat lanjutan tentang peran/kondisi user",
+  "closing_italic":"string kalimat italic pertanyaan eksistensial user",
+  "closing_p3":"string kalimat penutup emosional",
+  "closing_filosofi":"string filosofi MindHack",
+  "penutup_quote":"string kalimat penutup hangat",
+  "penutup_note":"string 1-2 kalimat disclaimer tapi hangat"
+}`;
+
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CFG.GEMINI_KEY}`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{parts:[{text:`${input}\n\nBuat laporan premium mendalam dan personal untuk ${namaDepan}. RESPOND ONLY WITH VALID JSON.`}]}],
+        systemInstruction:{parts:[{text:sys}]},
+        generationConfig:{temperature:0.85,maxOutputTokens:4096}
+      })
+    });
+    const data=await res.json();
+    let txt=data.candidates[0].content.parts[0].text;
+    txt=txt.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    const d=JSON.parse(txt);
+    renderLaporan(d);
+  }catch(err){
+    console.error(err);
+    renderError();
+  }
+}
+
+function renderLaporan(d){
+  const {namaDepan,namaBelakang,tgl,jam,goldar,agama,tempat,profesi,peran,parsed}=U;
+  const T=TIPE_MAP[parsed.dom]||TIPE_MAP['BUMI'];
+  const S=TIPE_MAP[parsed.sec]||TIPE_MAP['BUMI'];
+  const tglF=tgl?new Date(tgl).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}):'';
+  const metaParts=[tempat,tglF,jam?jam+' WIB':'',goldar&&goldar!='?'?'Gol. Darah '+goldar:''].filter(Boolean);
+
+  // Skor estimasi dari kode (dominan 40%, sekunder 25%, sisanya dibagi)
+  const allKeys=['BARA','TUMBUH','BAJA','BUMI','ARUS'];
+  const scores={};
+  allKeys.forEach(k=>{scores[k]=8;});
+  scores[parsed.dom]=40; scores[parsed.sec]=25;
+  const remain=27; const others=allKeys.filter(k=>k!==parsed.dom&&k!==parsed.sec);
+  others.forEach((k,i)=>{scores[k]=i===0?11:i===1?9:7;});
+
+  const vak=d.vak||{k:50,v:30,a:20};
+
+  const html=`
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-mountain">
+    <svg viewBox="0 0 600 340" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5E1A" stop-opacity="0.12"/><stop offset="100%" stop-color="#4A2F0E" stop-opacity="0.06"/></linearGradient></defs>
+      <polygon points="0,340 60,200 130,260 220,100 310,190 380,80 440,160 510,60 580,130 600,100 600,340" fill="rgba(139,94,26,0.06)"/>
+      <polygon points="0,340 40,270 100,290 180,200 260,240 320,160 380,220 460,140 530,200 600,150 600,340" fill="url(#mg)"/>
+    </svg>
+  </div>
+  <div class="cover-glow"></div>
+  <div class="c-emblem">
+    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="60,8 110,100 10,100" stroke="#8B5E1A" stroke-width="1.5" fill="none"/>
+      <polygon points="60,30 90,80 30,80" stroke="#8B5E1A" stroke-width="1" fill="none" opacity=".5"/>
+      <line x1="60" y1="8" x2="60" y2="100" stroke="#8B5E1A" stroke-width=".5" opacity=".3"/>
+    </svg>
+  </div>
+  <div class="cover-inner">
+    <div class="c-top">
+      <div class="c-logo-row"><div class="mh-emblem">MH</div><span class="c-brand-txt">MindHack Learning</span></div>
+      <div class="c-rule"><div class="c-rule-line"></div><div class="c-rule-diamond"></div><div class="c-rule-line"></div></div>
+      <div class="c-confid">Personal Confidential Report</div>
+      <div style="height:14px"></div>
+      <div class="c-for">Laporan Personal Untuk:</div>
+      <div class="c-name">${namaDepan}</div>
+      ${namaBelakang?`<div class="c-name-last">${namaBelakang}</div>`:''}
+      ${metaParts.length?`<div class="c-meta">${metaParts.join(' · ')}</div>`:''}
+      <div class="c-rule2"><div class="c-rule2-line"></div><div style="font-size:9px;color:var(--muted);letter-spacing:1px;flex-shrink:0;font-family:'DM Mono',monospace;">KARAKTER DOMINAN</div><div class="c-rule2-line"></div></div>
+      <div class="c-karakter">${T.emoji} ${T.nama.toUpperCase()}</div>
+      <div class="c-tagline">"${d.cover_tagline||''}"</div>
+    </div>
+    <div class="c-bottom">
+      <div class="c-bottom-quote">"${d.cover_quote||''}"</div>
+      <div class="c-bottom-meta"><span>MindHack Decode · 2026</span><span class="scroll-hint">↓ Scroll</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- WOW PAGE -->
+<div class="wow-page">
+  <div class="wow-num">◆ &nbsp; Untuk ${namaDepan} &nbsp; ◆</div>
+  <div class="wow-divider"></div>
+  <div class="wow-line1">${d.wow_line1||'Kamu bukan'}</div>
+  <div class="wow-line2">${d.wow_line2||T.nama+'.'}</div>
+  <div class="wow-line3">${d.wow_line3||''}</div>
+  <div class="wow-sub">${d.wow_sub||''}</div>
+</div>
+
+<div class="sections">
+
+<!-- 01 CORE IDENTITY -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">01 · Core Identity</div><div class="sec-title">Siapa Sebenarnya ${namaDepan}</div></div>
+  <div class="chart-wrap">
+    <div class="chart-title">Distribusi 5 Unsur Karakter</div>
+    <div class="radial-ring">
+      ${allKeys.map(k=>{
+        const ti=TIPE_MAP[k];
+        const pct=scores[k];
+        return`<div class="el-row">
+          <span class="el-sym">${ti.emoji}</span>
+          <span class="el-name" style="color:${ti.c}">${ti.nama}</span>
+          <div class="el-track"><div class="el-fill" data-w="${pct}%" style="background:linear-gradient(90deg,${ti.c},${ti.c}88)"></div></div>
+          <span class="el-pct" style="color:${ti.c}">${pct}%</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="breath"></div>
+    <div class="pentagon-wrap">
+      <canvas id="pentaCanvas" width="220" height="200"></canvas>
+      <div class="pentagon-lbl">Peta Kepribadian 5 Dimensi</div>
+    </div>
+  </div>
+  <div class="two" style="margin-bottom:10px;">
+    <div class="stat"><div class="sn">${scores[parsed.dom]}%</div><div class="sl">Kekuatan ${T.nama}<br>+ Nuansa ${S.nama}</div></div>
+    <div class="stat"><div class="sn" style="font-size:20px;padding-top:4px;">${vak.k>=vak.v&&vak.k>=vak.a?'Kinestetik':vak.v>=vak.a?'Visual':'Auditory'}</div><div class="sl">Gaya belajar dominan<br>${Math.max(vak.k,vak.v,vak.a)}% ${vak.k>=vak.v&&vak.k>=vak.a?'praktik langsung':vak.v>=vak.a?'visual':'mendengar'}</div></div>
+  </div>
+  <div class="card c-dark">
+    <div class="cl cl-d">Kamu Cenderung</div>
+    <ul class="ls">${(d.sec01_cenderung||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+  ${d.sec01_goldar&&goldar!='?'?`<div class="card c-earth"><div class="cl cl-g">Nuansa Golongan Darah ${goldar}</div><div class="bd"><p>${d.sec01_goldar}</p></div></div>`:''}
+</div>
+
+<!-- 02 CONFUSION DECODER -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">02 · Confusion Decoder</div><div class="sec-title">Kenapa Terasa Jalan di Tempat</div></div>
+  <div class="full-hl"><div class="big">"${d.sec02_quote||''}"</div></div>
+  <div class="breath"></div>
+  <div class="card c-dark">
+    <div class="cl cl-c">Kemungkinan Besar Bukan Ini Masalahnya</div>
+    <ul class="ls warn">${(d.sec02_bukan||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+  <div class="card c-clay">
+    <div class="cl cl-c">Ini Kemungkinan Akar Sebenarnya</div>
+    <div class="bd"><p>${d.sec02_akar||''}</p></div>
+  </div>
+  <div class="breath"></div>
+  <div class="card c-dark">
+    <div class="cl cl-d">${namaDepan} Biasanya Mulai Sulit Berkembang Saat</div>
+    <ul class="ls warn">${(d.sec02_trigger||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+  <div class="bq"><p>"${d.sec02_dark_mirror||''}"</p></div>
+</div>
+
+<!-- 03 POLA -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">03 · Pola Pikiran & Emosi</div><div class="sec-title">${d.sec03_title||'Di Balik Karaktermu'}</div></div>
+  ${(d.sec03_cards||[]).map(c=>`<div class="card c-dark"><div class="cl cl-d">${c.cl}</div><div class="bd"><p>${c.body}</p></div></div><div class="breath"></div>`).join('')}
+  <div class="full-hl" style="margin-top:4px;"><div class="big" style="font-size:22px;">"${d.sec03_full_hl||''}"</div></div>
+</div>
+
+<!-- 04 POLA BELAJAR -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">04 · Pola Belajar</div><div class="sec-title">Cara Otakmu Bekerja</div></div>
+  <div class="card c-dark" style="margin-bottom:10px;">
+    <div class="cl cl-d">Gaya Belajar VAK — ${namaDepan}</div>
+    <div class="vak"><div class="vak-r"><span class="vak-n">Kinestetik — Praktik Langsung</span><span class="vak-p">${vak.k}%</span></div><div class="vak-t"><div class="vak-f" data-w="${vak.k}%"></div></div></div>
+    <div class="vak"><div class="vak-r"><span class="vak-n">Visual</span><span class="vak-p">${vak.v}%</span></div><div class="vak-t"><div class="vak-f" data-w="${vak.v}%"></div></div></div>
+    <div class="vak" style="margin-bottom:0"><div class="vak-r"><span class="vak-n">Auditory</span><span class="vak-p" style="color:var(--muted)">${vak.a}%</span></div><div class="vak-t"><div class="vak-f" data-w="${vak.a}%" style="background:rgba(139,94,26,0.25)"></div></div></div>
+  </div>
+  <div class="card c-earth">
+    <div class="cl cl-g">Cara yang Lebih Cocok untukmu</div>
+    <ul class="ls">${(d.sec04_cocok||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+  <div class="card c-dark">
+    <div class="cl cl-c">Yang Sering Membuat Proses Belajarmu Gagal</div>
+    <ul class="ls warn">${(d.sec04_tidak_cocok||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+</div>
+
+<!-- 05 HIDDEN POTENTIAL -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">05 · Hidden Potential</div><div class="sec-title">Potensi yang Belum Kamu Lihat Sepenuhnya</div></div>
+  <div class="card c-earth">
+    <div class="cl cl-g">⚡ Potensi Terbesarmu Ada di</div>
+    <ul class="ls">${(d.sec05_potensi||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+  <div class="breath"></div>
+  <div class="bq"><p>"${d.sec05_bq||''}"</p></div>
+</div>
+
+<!-- 06 BLINDSPOT -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">06 · Blindspot</div><div class="sec-title">Yang Menahanmu Tanpa Kamu Sadari</div></div>
+  <div class="card c-dark">
+    <ul class="ls warn">${(d.sec06_blindspot||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+</div>
+
+<!-- 07 GROWTH DIRECTION -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">07 · Growth Direction</div><div class="sec-title">Arah Berkembang & Siklus Energimu</div></div>
+  <div class="card c-earth">
+    <div class="cl cl-g">🚀 Untuk Berkembang Lebih Stabil</div>
+    <ul class="ls">${(d.sec07_growth_tips||[]).map(x=>`<li>${x}</li>`).join('')}</ul>
+  </div>
+  <div class="card c-dark">
+    <div class="cl cl-g">Prediksi Siklus Energi — ${namaDepan}</div>
+    <div class="tl">
+      ${(d.sec07_timeline||[]).map((tl,i,arr)=>`
+      <div class="tl-i">
+        <div class="tl-l"><div class="tl-d ${tl.cls}">${tl.icon}</div>${i<arr.length-1?'<div class="tl-ln"></div>':''}</div>
+        <div class="tl-r">
+          <div class="tl-y">${tl.label}</div>
+          <div class="tl-t">${tl.title}</div>
+          <div class="tl-tg ${tl.tag}">${tl.tag==='tag-g'?'Waktu Baik':tl.tag==='tag-w'?'Energi Bertumbuh':tl.tag==='tag-b'?'Matangkan Sistem':'Tantangan & Kedewasaan'}</div>
+          <div class="tl-b">${tl.body}</div>
+          <div class="tl-s">
+            <div class="tl-sc"><div class="tl-sl">${tl.s1l}</div><div class="tl-sb"><div class="tl-sf" style="background:${tl.c1};width:${tl.s1v}%"></div></div><div class="tl-sn">${tl.s1v}%</div></div>
+            <div class="tl-sc"><div class="tl-sl">${tl.s2l}</div><div class="tl-sb"><div class="tl-sf" style="background:${tl.c2};width:${tl.s2v}%"></div></div><div class="tl-sn">${tl.s2v}%</div></div>
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<!-- 08 ACTION STEP -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">08 · Action Step</div><div class="sec-title">7 Langkah Konkret Mulai Sekarang</div></div>
+  <div class="step-list">
+    ${(d.sec08_steps||[]).map((s,i)=>`
+    <div class="step-i">
+      <div class="step-n">${i+1}</div>
+      <div class="step-c"><strong>${s.title}</strong><p>${s.body}</p></div>
+    </div>`).join('')}
+  </div>
+</div>
+
+<!-- 09 PROMPT -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">09 · Dynamic Personal Prompt</div><div class="sec-title">Prompt AI Personal Siap Pakai</div></div>
+  <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.65;">Gunakan prompt ini di ChatGPT, Claude, atau AI lainnya untuk pengalaman yang lebih personal.</div>
+  ${(d.sec09_prompts||[]).map((p,i)=>`
+  <div class="prompt-box">
+    <div class="prompt-tag">${p.tag||'Prompt '+(i+1)}</div>
+    <div class="prompt-text" id="pt${i}">${p.text||''}</div>
+    <button class="copy-btn" onclick="copyTxt('pt${i}',this)">📋 Copy Prompt</button>
+  </div>`).join('')}
+</div>
+
+<!-- 10 PRODUK -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">10 · Lanjutkan Perjalanan Decode-mu</div><div class="sec-title">Sistem yang Cocok untuk ${namaDepan}</div></div>
+  ${(d.produk||[]).map(p=>`
+  <div class="prod${p.ft?' ft':''}">
+    ${p.ft?'<div class="pbadge pb-g">⭐ Paling Cocok</div>':''}
+    <div class="pico">${p.ico}</div>
+    <div class="pname">${p.name}</div>
+    <div class="pdesc">${p.desc}</div>
+    <div class="pwhy">${p.why}</div>
+    <button class="pbtn" onclick="hubungiWADone('${p.name}')">${p.btn} →</button>
+  </div>`).join('')}
+</div>
+
+<!-- PENUTUP -->
+<div class="section">
+  <div class="sec-header"><div class="sec-seq">10 · Pesan Penutup</div><div class="sec-title">Untuk ${namaDepan}</div></div>
+  <div class="closing">
+    <span class="closing-em">${T.emoji}</span>
+    <p>"${d.closing_p1||''}"</p>
+    <p style="margin-top:14px;">${d.closing_p2||''}</p>
+    <p style="margin-top:10px;font-family:'Cormorant Garamond',serif;font-size:20px;font-style:italic;color:var(--gold2);">"${d.closing_italic||''}"</p>
+    <p style="margin-top:16px;"><em>${d.closing_p3||''}</em></p>
+    <p style="margin-top:20px;font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:var(--muted);">"${d.closing_filosofi||'Banyak orang bukan tidak mampu berkembang…<br>mereka cuma terlalu lama bingung sendirian.'}"</p>
+  </div>
+  <div class="disc"><p>⚠ <strong>Catatan:</strong> Laporan ini adalah estimasi berdasarkan pola jawaban quiz dan data input. Gunakan sebagai <strong>panduan eksplorasi diri</strong> — bukan diagnosa final.</p></div>
+  <div class="btn-area">
+    <button class="btn-wa" onclick="hubungiWADone('')"><span>💬</span><div><div>Diskusi Laporan &amp; Tanya Promo via WA</div><small>Tim siap bantu kamu lanjutkan perjalanan decode ini</small></div></button>
+    <button class="btn-retake" onclick="showScreen('sForm')">📋 Isi Ulang / Data Baru</button>
+    <button class="btn-pdf" onclick="simpanPDF()" id="btnPdf"><span>📄</span> Simpan Laporan sebagai PDF</button>
+    <div class="pdf-loading" id="pdfLoading"><div class="spinner"></div><span>Sedang menyiapkan PDF…</span></div>
+  </div>
+</div>
+
+</div><!-- /sections -->
+<div class="footer">
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+    <div class="mh-emblem" style="width:24px;height:24px;font-size:9px;">MH</div>
+    <span style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.5px;">MindHack Learning</span>
+  </div>
+  <p>MindHack Decode · Laporan Lengkap Premium<br>${U.nama} · ${T.emoji} ${T.nama} · 2026<br>© 2026 MindHack Learning · Semua hak dilindungi</p>
+</div>`;
+
+  document.getElementById('laporan').innerHTML=html;
+  showScreen('sLaporan');
+
+  // Animate bars
+  setTimeout(()=>{
+    document.querySelectorAll('.el-fill[data-w]').forEach(el=>el.style.width=el.dataset.w);
+    document.querySelectorAll('.vak-f[data-w]').forEach(el=>el.style.width=el.dataset.w);
+    drawPentagon(Object.values(scores).map(v=>v/100));
+  },400);
+}
+
+function drawPentagon(vals){
+  const canvas=document.getElementById('pentaCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const cx=W/2,cy=H/2+10,R=78;
+  const n=5;
+  const labels=['Bara','Tumbuh','Baja','Bumi','Arus'];
+  const colors=['#B85A30','#4E7840','#6A7D8E','#C8A03C','#3A7A9C'];
+  function ang(i){return(Math.PI*2*i/n)-Math.PI/2;}
+  // Grid
+  [.25,.5,.75,1].forEach(r=>{
+    ctx.beginPath();
+    for(let i=0;i<n;i++){const a=ang(i);i===0?ctx.moveTo(cx+R*r*Math.cos(a),cy+R*r*Math.sin(a)):ctx.lineTo(cx+R*r*Math.cos(a),cy+R*r*Math.sin(a));}
+    ctx.closePath();ctx.strokeStyle='rgba(139,94,26,0.12)';ctx.lineWidth=1;ctx.stroke();
+  });
+  // Spokes
+  for(let i=0;i<n;i++){const a=ang(i);ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.strokeStyle='rgba(139,94,26,0.14)';ctx.lineWidth=1;ctx.stroke();}
+  // Fill
+  ctx.beginPath();
+  for(let i=0;i<n;i++){const a=ang(i),v=Math.min(vals[i]+0.08,1);i===0?ctx.moveTo(cx+R*v*Math.cos(a),cy+R*v*Math.sin(a)):ctx.lineTo(cx+R*v*Math.cos(a),cy+R*v*Math.sin(a));}
+  ctx.closePath();ctx.fillStyle='rgba(139,94,26,0.14)';ctx.fill();ctx.strokeStyle='rgba(139,94,26,0.55)';ctx.lineWidth=1.5;ctx.stroke();
+  // Dots & labels
+  for(let i=0;i<n;i++){
+    const a=ang(i),v=Math.min(vals[i]+0.08,1);
+    const x=cx+R*v*Math.cos(a),y=cy+R*v*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle=colors[i];ctx.fill();
+    const lx=cx+(R+20)*Math.cos(a),ly=cy+(R+20)*Math.sin(a);
+    ctx.font='10px Outfit,sans-serif';ctx.fillStyle='rgba(139,94,26,0.7)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(labels[i],lx,ly);
+  }
+}
+
+function renderError(){
+  document.getElementById('laporan').innerHTML=`
+  <div style="padding:60px 24px;text-align:center;min-height:60svh;display:flex;flex-direction:column;justify-content:center;">
+    <div style="font-size:44px;margin-bottom:16px">⚠️</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;margin-bottom:12px">Koneksi AI Terganggu</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px">Maaf, ada gangguan sementara.<br>Tim MindHack akan kirim laporan via WhatsApp segera.</div>
+    <button class="btn-wa" style="max-width:320px;margin:0 auto 10px" onclick="hubungiWADone('')"><span>💬</span><div>Hubungi WhatsApp MindHack</div></button>
+    <button style="max-width:320px;margin:0 auto;background:transparent;border:1px solid var(--goldborder);border-radius:var(--rsm);padding:12px;font-size:13px;color:var(--gold);cursor:pointer;font-family:'Outfit',sans-serif;" onclick="showScreen('sForm')">← Coba Lagi</button>
+  </div>`;
+  showScreen('sLaporan');
+}
+
+function copyTxt(id,btn){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    const o=btn.textContent;btn.textContent='✅ Tersalin!';setTimeout(()=>btn.textContent=o,2000);
+  });
+}
+
+function hubungiWA(){
+  window.open(`https://wa.me/${CFG.WA_NUMBER}?text=${encodeURIComponent('Halo MindHack! 👋\n\nSaya ingin mendapatkan kode unlock laporan premium MindHack Decode. Terima kasih!')}`, '_blank');
+}
+
+function hubungiWADone(produk){
+  const t=U.parsed?TIPE_MAP[U.parsed.dom]?.nama||'':'';
+  const k=U.parsed?.kode||'';
+  const msg=`Halo MindHack! 👋\n\nNama: ${U.nama||''}\nKarakter: ${t}\nKode: ${k}\n${produk?`\nTertarik dengan: ${produk}\n`:''}${produk?'':'Ingin diskusi laporan premium saya.'}\nTerima kasih!`;
+  window.open(`https://wa.me/${CFG.WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function simpanPDF(){
+  const btn=document.getElementById('btnPdf');
+  const load=document.getElementById('pdfLoading');
+  btn.style.display='none';load.style.display='flex';
+  const el=document.getElementById('laporan');
+  html2pdf().set({margin:0,filename:`MindHack_Decode_${U.namaDepan||'Premium'}.pdf`,image:{type:'jpeg',quality:.92},html2canvas:{scale:2,useCORS:true,backgroundColor:'#F5EFE3'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save()
+  .then(()=>{btn.style.display='flex';load.style.display='none';});
+}
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Size: $(wc -c < /home/claude/mindhack_premium_v2.html) bytes"
+Keluaran
+
+Size: 55599 bytes
